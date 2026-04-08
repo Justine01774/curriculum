@@ -304,42 +304,28 @@
 </div>
 <script>
 function sendHeight() {
-  const body = document.body;
-  const html = document.documentElement;
-
-  const height = Math.max(
-    body.scrollHeight,
-    body.offsetHeight,
-    body.clientHeight,
-    html.scrollHeight,
-    html.offsetHeight,
-    html.clientHeight
-  );
-
+  var height = document.documentElement.scrollHeight;
   window.parent.postMessage({
     type: 'setHeight',
     height: height
   }, '*');
 }
 
-function scheduleHeightChecks() {
-  requestAnimationFrame(() => {
-    sendHeight();
-    setTimeout(sendHeight, 50);
-    setTimeout(sendHeight, 150);
-    setTimeout(sendHeight, 300);
-    setTimeout(sendHeight, 500);
-  });
+function updateHeight() {
+  setTimeout(sendHeight, 50);
+  setTimeout(sendHeight, 150);
+  setTimeout(sendHeight, 300);
+  setTimeout(sendHeight, 600);
 }
 
-window.addEventListener('DOMContentLoaded', scheduleHeightChecks);
-window.addEventListener('load', scheduleHeightChecks);
-window.addEventListener('resize', scheduleHeightChecks);
-window.addEventListener('pageshow', scheduleHeightChecks);
+// au chargement
+window.addEventListener('load', updateHeight);
 
+// quand tu ouvres OU fermes un module
 document.querySelectorAll('details').forEach(function(el) {
-  el.addEventListener('toggle', function() {
-    scheduleHeightChecks();
-  });
+  el.addEventListener('toggle', updateHeight);
 });
+
+// petit bonus pour forcer le recalcul
+setInterval(sendHeight, 1000);
 </script>
