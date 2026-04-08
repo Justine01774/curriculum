@@ -304,7 +304,11 @@
 </div>
 <script>
 function sendHeight() {
-  var height = document.documentElement.scrollHeight;
+  var wrap = document.querySelector('.cw');
+  if (!wrap) return;
+
+  var height = Math.ceil(wrap.scrollHeight);
+
   window.parent.postMessage({
     type: 'setHeight',
     height: height
@@ -315,17 +319,28 @@ function updateHeight() {
   setTimeout(sendHeight, 50);
   setTimeout(sendHeight, 150);
   setTimeout(sendHeight, 300);
-  setTimeout(sendHeight, 600);
+  setTimeout(sendHeight, 500);
 }
 
-// au chargement
-window.addEventListener('load', updateHeight);
+document.addEventListener('DOMContentLoaded', function() {
+  var allDetails = document.querySelectorAll('details');
 
-// quand tu ouvres OU fermes un module
-document.querySelectorAll('details').forEach(function(el) {
-  el.addEventListener('toggle', updateHeight);
+  allDetails.forEach(function(current) {
+    current.addEventListener('toggle', function() {
+      if (current.open) {
+        allDetails.forEach(function(other) {
+          if (other !== current) {
+            other.removeAttribute('open');
+          }
+        });
+      }
+      updateHeight();
+    });
+  });
+
+  updateHeight();
 });
 
-// petit bonus pour forcer le recalcul
-setInterval(sendHeight, 1000);
+window.addEventListener('load', updateHeight);
+window.addEventListener('resize', updateHeight);
 </script>
