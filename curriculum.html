@@ -302,3 +302,21 @@
   </details>
 
 </div>
+<script>
+function sendHeight() {
+  const height = document.documentElement.scrollHeight;
+  window.parent.postMessage({
+    type: 'setHeight',
+    height: height
+  }, '*');
+}
+
+window.addEventListener('load', sendHeight);
+window.addEventListener('resize', sendHeight);
+
+document.querySelectorAll('details').forEach((el) => {
+  el.addEventListener('toggle', () => {
+    setTimeout(sendHeight, 200);
+  });
+});
+</script>
