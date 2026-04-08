@@ -304,43 +304,38 @@
 </div>
 <script>
 function sendHeight() {
-  const height = Math.max(
-    document.body.scrollHeight,
-    document.documentElement.scrollHeight,
-    document.body.offsetHeight,
-    document.documentElement.offsetHeight
-  );
-
+  const height = document.documentElement.scrollHeight;
   window.parent.postMessage({
     type: 'setHeight',
     height: height
   }, '*');
 }
 
-window.addEventListener('DOMContentLoaded', function () {
-  setTimeout(sendHeight, 100);
-  setTimeout(sendHeight, 500);
-  setTimeout(sendHeight, 1000);
-});
-
-window.addEventListener('load', function () {
-  setTimeout(sendHeight, 100);
-  setTimeout(sendHeight, 500);
-  setTimeout(sendHeight, 1000);
-});
-
-window.addEventListener('resize', function () {
-  setTimeout(sendHeight, 200);
-});
-
-window.addEventListener('pageshow', function () {
+function scheduleHeightChecks() {
+  setTimeout(sendHeight, 50);
+  setTimeout(sendHeight, 150);
   setTimeout(sendHeight, 300);
-});
+  setTimeout(sendHeight, 600);
+}
+
+window.addEventListener('DOMContentLoaded', scheduleHeightChecks);
+window.addEventListener('load', scheduleHeightChecks);
+window.addEventListener('resize', scheduleHeightChecks);
+window.addEventListener('pageshow', scheduleHeightChecks);
 
 document.querySelectorAll('details').forEach(function(el) {
   el.addEventListener('toggle', function() {
-    setTimeout(sendHeight, 100);
-    setTimeout(sendHeight, 300);
+    scheduleHeightChecks();
   });
+});
+
+const observer = new MutationObserver(function() {
+  scheduleHeightChecks();
+});
+
+observer.observe(document.body, {
+  childList: true,
+  subtree: true,
+  attributes: true
 });
 </script>
