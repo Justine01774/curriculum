@@ -316,10 +316,13 @@ function sendHeight() {
 }
 
 function updateHeight() {
-  setTimeout(sendHeight, 50);
-  setTimeout(sendHeight, 150);
-  setTimeout(sendHeight, 300);
-  setTimeout(sendHeight, 500);
+  requestAnimationFrame(function() {
+    sendHeight();
+    setTimeout(sendHeight, 100);
+    setTimeout(sendHeight, 250);
+    setTimeout(sendHeight, 500);
+    setTimeout(sendHeight, 900);
+  });
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -334,6 +337,7 @@ document.addEventListener('DOMContentLoaded', function() {
           }
         });
       }
+
       updateHeight();
     });
   });
@@ -343,4 +347,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
 window.addEventListener('load', updateHeight);
 window.addEventListener('resize', updateHeight);
+window.addEventListener('orientationchange', updateHeight);
+window.addEventListener('pageshow', updateHeight);
+
+setInterval(sendHeight, 1200);
 </script>
